@@ -1,0 +1,41 @@
+// 选择目标MCU，根据自己的S32K系列对应MCU进行更改
+device S32K144 (allow security)
+// 选择调试接口类型为SWD或者JTAG
+si SWD
+// 设置调试速度
+speed 1000
+// 设置通过J-Link给目标MCU供电，仅高级版本的J-Link才有供电能力
+power on 5
+// 尝试连接
+connect
+// 执行Mass Erase解密芯片
+//unlock kinetis
+// 选择MDM-AP，且设置DPACC寄存器的SELECT[7:4] = 0xF
+SWDWriteDP 2 0x010000F0
+// 通过AP index(A[3:2]=0b11)读取MDM-AP IDR寄存器
+SWDReadAP 3
+// Dump out真实的AP寄存器值，读出S32K14x系列MCU的MDM-AP IDR寄存器固定为 0x001C0000，S32K11x则为0x001C0020
+SWDReadAP 3
+// 选择MDM-AP，且设置DPACC寄存器的SELECT[7:4] = 0x0
+SWDWriteDP 2 0x01000000
+// 通过AP index(A[3:2]=0b00)读取MDM-AP状态寄存器
+SWDReadAP 0
+// Dump out真实的AP寄存器值
+SWDReadAP 0
+// 选择MDM-AP，且设置DPACC寄存器的SELECT[7:4] = 0x0
+SWDWriteDP 2 0x01000000
+// 通过AP index(A[3:2]=0b01)，置位MDM-AP寄存器最低位，启动Mass Erase操作
+SWDWriteAP 1 0x01000001
+// Tips：启动Mass Erase操作后，还需要读取MDM-AP的状态寄存器，通过其最低位判断Mass Erase操作是否完成：该位为1表示Mass Erase正在进行，为0表示操作完成
+// 选择MDM-AP，且设置DPACC寄存器的SELECT[7:4] = 0x0
+SWDWriteDP 2 0x01000000
+// 通过AP index(A[3:2]=0b00)读取MDM-AP状态寄存器
+SWDReadAP 0
+// Dump out真实的AP寄存器值
+SWDReadAP 0
+// 读取地址0x400开始的16(0x10)个字节的Flash配置区域值
+//mem 400 10
+// 关闭对目标MCU的供电
+//power off
+// 关闭J-Link连接并退出命令行工具
+//qc
