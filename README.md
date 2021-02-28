@@ -1,4 +1,4 @@
-# S32K1xx 系列 MCU J-Link 解锁
+# S32K1xx 系列 MCU J-Link 解锁 <a title="Hits" target="_blank" href="https://github.com/SummerFalls/S32K1xx_JLink_Unlock_Script"><img src="https://hits.b3log.org/SummerFalls/S32K1xx_JLink_Unlock_Script.svg"></a>
 
 ## 修改 JLink.bat
 
